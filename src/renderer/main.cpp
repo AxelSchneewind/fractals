@@ -40,6 +40,7 @@ int main () {
     Transformation transformation = DefaultTransformation(scale, center, resolution);
     CFunction function = MultiBrotFunction(2);
 
+    //TODO create color palette class
     tuple<float, rgb> colors[] {
         tuple<float, rgb>(0.0, make_colour(0)),
         tuple<float, rgb>(10.0, make_colour(0x202050)),
