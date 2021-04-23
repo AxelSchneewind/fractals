@@ -33,3 +33,6 @@
 
 # Generated bitmap files
 *.bmp
+
+# VS code files
+.vscode
