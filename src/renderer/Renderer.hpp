@@ -1,43 +1,49 @@
 #pragma once
-#include "../bitmap/bitmap_image.hpp"
-#include "../geometry/vector2.hpp"
-#include "ColoringMethods.hpp"
-#include "Functions.hpp"
-#include "Transformation.hpp"
-#include <functional>
+
+#include "RenderMethods.hpp"
+#include <thread>
 
 
-class RenderMethod {
-public:
-    virtual rgb colorAt(vector2 pixel) = 0;
-};
-
-
-class StandardRenderMethod : public RenderMethod {
-private:
-    Transformation transformation;
-
-    CFunction function;
-    int maxIterations;
-    double escapeValue;
-
-    ColoringMethod colorMethod;
-
-    int countIterations(complex constant) {
-        complex value = function(complex(0,0),constant);
-        for (int i = 1; i < maxIterations; i++) {
-            if(value.abs() >= escapeValue) {
-                return i;
+auto rowCalculation(std::function<void(int, int, bitmap_image*)> function, bitmap_image *image) {
+    return [=](int X, int xStep, vector2 resolution) -> void {         
+            for (int x = X; x < resolution.x; x += xStep) {
+                for (int y = 0; y < resolution.y; y++) { 
+                    function(x, y, image);
+                }
             }
-            value = function(value,constant);
-        }
-        return maxIterations;
-    }
-public:
-    StandardRenderMethod(Transformation transformation, CFunction function, int maxIterations, double escapeValue, ColoringMethod colorMethod) : transformation(transformation), function(function), maxIterations(maxIterations), escapeValue(escapeValue), colorMethod(colorMethod) {};
+        };
+}
 
-    rgb colorAt(vector2 pixel) {
-        int result = countIterations(transformation(pixel));
-        return colorMethod(result);
+void compute(std::function<void(int, int, bitmap_image*)> function, bitmap_image *image) {
+    int threadCount = 8;
+    std::thread threads[threadCount];
+    for (int i = 0; i < threadCount; i++) {
+        threads[i] = std::thread(rowCalculation(function, image), i, threadCount, vec2(image->width(), image->height()));
     }
-};
+    for (int i = 0; i < threadCount; i++) {
+        threads[i].join();
+    }
+}
+
+void calculate(vector2 resolution, RenderMethod *renderMethod, bitmap_image *image) {
+    compute(
+        [=](int x, int y, bitmap_image *im)-> void{renderMethod->calculate(vec2(x,y), im);}, 
+        image);
+}
+
+void postProcess(vector2 resolution, RenderMethod *renderMethod, bitmap_image *image) {
+    compute(
+        [=](int x, int y, bitmap_image *im)-> void{renderMethod->postProcess(vec2(x,y), im);}, 
+        image);
+}
+
+
+
+bitmap_image generate(vector2 resolution, RenderMethod *renderMethod) {
+    bitmap_image image(resolution.x, resolution.y);
+
+    calculate(resolution, renderMethod, &image);
+    postProcess(resolution, renderMethod, &image);
+    
+    return image;
+}

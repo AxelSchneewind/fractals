@@ -104,6 +104,11 @@ namespace vector
         return result;
     }
 
+
+    std::string to_string(vector2 vec) {
+        return "(" + std::to_string(vec.x) + "," + std::to_string(vec.y) + ")";
+    }
+
 };
 
 typedef vector::vector2 vector2;

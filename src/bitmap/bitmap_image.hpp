@@ -1671,11 +1671,17 @@ inline rgb_t make_colour(const unsigned int& red, const unsigned int& green, con
 inline rgb_t make_colour(uint32_t color) {
    rgb_t result;
 
-   result.red   = static_cast<unsigned char>((color <<  8) >>24);
-   result.green = static_cast<unsigned char>((color << 16) >>24);
-   result.blue  = static_cast<unsigned char>((color << 24) >>24);
+   result.red   = static_cast<unsigned char>((color/256/256) % 256);
+   result.green = static_cast<unsigned char>((color/256) % 256);
+   result.blue  = static_cast<unsigned char>((color) % 256);
 
    return result;
+}
+
+inline uint32_t to_int(rgb_t color) {
+   return (uint32_t(color.red) << 16) + 
+         (uint32_t(color.green) << 8) + 
+         (uint32_t(color.blue));
 }
 
 template <typename OutputIterator>

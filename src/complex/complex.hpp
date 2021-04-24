@@ -8,11 +8,13 @@ struct complex {
     long double imaginary;
 
     complex(long double real, long double imaginary);
+    
+    complex operator_();
 
     complex operator+(complex number);
     complex operator-(complex number);
     complex operator*(complex number);
-    complex operator_();
+    complex operator^(complex number);
 
     complex operator+(long double number); 
     complex operator-(long double number);      
@@ -26,6 +28,9 @@ struct complex {
 
 complex::complex(long double real, long double imaginary) : real(real), imaginary(imaginary) {}
 
+complex complex::operator_() {
+    return complex(real, -imaginary);
+}
 complex complex::operator+(complex number) {
     return complex(real + number.real, imaginary + number.imaginary);
 }
@@ -36,8 +41,9 @@ complex complex::operator*(complex number) {
     return complex(real * number.real - imaginary * number.imaginary,
         real * number.imaginary + imaginary * number.real);
 }
-complex complex::operator_() {
-    return complex(real, -imaginary);
+
+complex complex::operator^(complex number) {
+
 }
 
 
