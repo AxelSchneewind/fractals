@@ -18,8 +18,26 @@ const CFunction MultiBrotFunction(int exponent) {
     });
 };
 
-const CFunction ExtMultiBrotFunction(int exponent, complex constant) {
-    return ([=](complex number, complex constant1) -> complex { 
-        return ((number^exponent) + constant1) + constant; 
-    });
+const CFunction ExtMultiBrotFunction(float exponent, bool conjugate) {
+    if(conjugate) {
+        return ([=](complex number, complex constant) -> complex { 
+            return ((number.conjugate())^exponent) + constant; 
+        });
+    } else {
+        return ([=](complex number, complex constant) -> complex { 
+            return (number^exponent) + constant; 
+        });
+    }
 };
+
+const CFunction Exponential(complex base, bool conjugate) {
+    if(conjugate) {
+        return ([=](complex number, complex constant) -> complex { 
+            return (complex(base)^(number.conjugate())) + constant; 
+        });
+    } else {
+        return ([=](complex number, complex constant) -> complex { 
+            return (complex(base)^number) + constant; 
+        });
+    }
+}

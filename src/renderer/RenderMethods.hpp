@@ -28,7 +28,7 @@ private:
     int countIterations(complex constant) {
         complex value = function(complex(0,0),constant);
         for (int i = 1; i < maxIterations; i++) {
-            if(value.abs() >= escapeValue) {
+            if(value.absolute() >= escapeValue) {
                 return i;
             }
             value = function(value,constant);

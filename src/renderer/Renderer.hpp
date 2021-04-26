@@ -4,21 +4,22 @@
 #include <thread>
 
 
-auto rowCalculation(std::function<void(int, int, bitmap_image*)> function, bitmap_image *image) {
-    return [=](int X, int xStep, vector2 resolution) -> void {         
-            for (int x = X; x < resolution.x; x += xStep) {
-                for (int y = 0; y < resolution.y; y++) { 
-                    function(x, y, image);
-                }
+auto rowCalculation(std::function<void(int, int, bitmap_image*)> function, bitmap_image *image, int Y, int yStep) {
+    return [=]() -> void {
+        for (int y = Y; y < image->height(); y += yStep) {  
+            for (int x = 0; x < image->width(); x++) {
+                function(x, y, image);
             }
-        };
+            std::cout << "Thread: " << Y << " finished line: " << y << std::endl;
+        }
+    };
 }
 
 void compute(std::function<void(int, int, bitmap_image*)> function, bitmap_image *image) {
     int threadCount = 8;
     std::thread threads[threadCount];
     for (int i = 0; i < threadCount; i++) {
-        threads[i] = std::thread(rowCalculation(function, image), i, threadCount, vec2(image->width(), image->height()));
+        threads[i] = std::thread(rowCalculation(function, image, i, threadCount));
     }
     for (int i = 0; i < threadCount; i++) {
         threads[i].join();
@@ -27,13 +28,13 @@ void compute(std::function<void(int, int, bitmap_image*)> function, bitmap_image
 
 void calculate(vector2 resolution, RenderMethod *renderMethod, bitmap_image *image) {
     compute(
-        [=](int x, int y, bitmap_image *im)-> void{renderMethod->calculate(vec2(x,y), im);}, 
+        [=](int x, int y, bitmap_image *im)-> void { renderMethod->calculate(vec2(x,y), im); }, 
         image);
 }
 
 void postProcess(vector2 resolution, RenderMethod *renderMethod, bitmap_image *image) {
     compute(
-        [=](int x, int y, bitmap_image *im)-> void{renderMethod->postProcess(vec2(x,y), im);}, 
+        [=](int x, int y, bitmap_image *im)-> void { renderMethod->postProcess(vec2(x,y), im); }, 
         image);
 }
 

@@ -31,7 +31,8 @@
 *.out
 *.app
 
-# Generated bitmap files
+# Generated image files
+./images/*
 *.bmp
 
 # VS code files

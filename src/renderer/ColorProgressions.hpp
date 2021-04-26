@@ -22,9 +22,9 @@ const ColorProgression pr2(3,p2);
 
 point p3[] {
     point(0.0,      make_colour(0x000000)),
-    point(1000.0,    make_colour(0xCCCCCC)),
-    point(10240,     make_colour(0xFFFFFF)),
-    point(40960,  make_colour(0x000000))
+    point(100.0,    make_colour(0xCCCCCC)),
+    point(10240,    make_colour(0xFFFFFF)),
+    point(40960,    make_colour(0x000000))
 };
 const ColorProgression pr3(4,p3);
 
