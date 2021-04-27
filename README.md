@@ -1,5 +1,5 @@
 # fractals
-C++ program that can render fractals
+C++ program that can render fractals (Mandelbrot set, Julia set, Buddhabrot fractals, ...)
 
 
 
